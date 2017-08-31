@@ -34,6 +34,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <iostream>
 
 #ifdef ENABLE_SIMULATION_PROFILING
 #include <cnoid/ViewManager>
@@ -263,7 +264,7 @@ public:
         Vector3 f;
         double time;
     };
-    ExtForceInfo extForceInfo;
+  ExtForceInfo extForceInfo, extForceInfo2;
 
     boost::optional<int> virtualElasticStringFunctionId;
     std::mutex virtualElasticStringMutex;
@@ -307,7 +308,7 @@ public:
     void pauseSimulation();
     void restartSimulation();
     void onSimulationLoopStopped();
-    void setExternalForce(BodyItem* bodyItem, Link* link, const Vector3& point, const Vector3& f, double time);
+    void setExternalForce(BodyItem* bodyItem, Link* link, Link* link2, const Vector3& point, const Vector3& point2, const Vector3& f, double time);
     void doSetExternalForce();
     void setVirtualElasticString(
         BodyItem* bodyItem, Link* link, const Vector3& attachmentPoint, const Vector3& endPoint);
@@ -2262,13 +2263,13 @@ SignalProxy<void()> SimulatorItem::sigSimulationFinished()
 }
 
 
-void SimulatorItem::setExternalForce(BodyItem* bodyItem, Link* link, const Vector3& point, const Vector3& f, double time)
+void SimulatorItem::setExternalForce(BodyItem* bodyItem, Link* link, Link* link2, const Vector3& point, const Vector3& point2, const Vector3& f, double time)
 {
-    impl->setExternalForce(bodyItem, link, point, f, time);
+  impl->setExternalForce(bodyItem, link, link2, point, point2, f, time);
 }
 
 
-void SimulatorItemImpl::setExternalForce(BodyItem* bodyItem, Link* link, const Vector3& point, const Vector3& f, double time)
+void SimulatorItemImpl::setExternalForce(BodyItem* bodyItem, Link* link, Link* link2, const Vector3& point, const Vector3& point2, const Vector3& f, double time)
 {
     if(bodyItem && link){
         SimulationBody* simBody = self->findSimulationBody(bodyItem);
@@ -2279,6 +2280,10 @@ void SimulatorItemImpl::setExternalForce(BodyItem* bodyItem, Link* link, const V
                 extForceInfo.point = point;
                 extForceInfo.f = f;
                 extForceInfo.time = time;
+                extForceInfo2.link = simBody->body()->link(link2->index());
+                extForceInfo2.point = point2;
+                extForceInfo2.f = f;
+                extForceInfo2.time = time;
             }
             if(!extForceFunctionId){
                 extForceFunctionId =
@@ -2303,11 +2308,16 @@ void SimulatorItemImpl::doSetExternalForce()
 {
     std::lock_guard<std::mutex> lock(extForceMutex);
     Link* link = extForceInfo.link;
+    Link* link2 = extForceInfo2.link;
     link->f_ext() += extForceInfo.f;
+    link2->f_ext() += extForceInfo2.f;
     const Vector3 p = link->T() * extForceInfo.point;
+    const Vector3 p2 = link->T() * extForceInfo2.point;
     link->tau_ext() += p.cross(extForceInfo.f);
+    link2->tau_ext() += p2.cross(extForceInfo2.f);
     if(extForceInfo.time > 0.0){
         extForceInfo.time -= worldTimeStep_;
+        extForceInfo2.time -= worldTimeStep_;
         if(extForceInfo.time <= 0.0){
             self->clearExternalForces();
         }

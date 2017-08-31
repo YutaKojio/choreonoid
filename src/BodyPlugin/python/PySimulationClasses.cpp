@@ -30,7 +30,7 @@ SimulatorItemPtr SimulatorItem_findActiveSimulatorItemFor(Item* item)
 }
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SimulatorItem_startSimulation_overloads, startSimulation, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SimulatorItem_setExternalForce_overloads, setExternalForce, 4, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SimulatorItem_setExternalForce_overloads, setExternalForce, 6, 7)
 
 void AISTSimulatorItem_setFriction1(AISTSimulatorItem& self, double staticFriction, double slipFriction)
 {

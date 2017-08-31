@@ -160,14 +160,14 @@ public:
         sigSimulationBodyListUpdated();
 
     /*
-    virtual void setExternalForce(BodyItem* bodyItem, Link* link, const Vector6& f);
+    virtual void setExternalForce(BodyItem* bodyItem, Link* link, Link* link2, const Vector6& f);
     */
 
     /**
        @param point link local position to apply the force
        @param f linear force to apply in global coordinate
     */
-    virtual void setExternalForce(BodyItem* bodyItem, Link* link, const Vector3& point, const Vector3& f, double time = 0.0);
+    virtual void setExternalForce(BodyItem* bodyItem, Link* link, Link* link2, const Vector3& point, const Vector3& point2, const Vector3& f, double time = 0.0);
     virtual void clearExternalForces();
     
     /**
