@@ -2282,7 +2282,7 @@ void SimulatorItemImpl::setExternalForce(BodyItem* bodyItem, Link* link, Link* l
                 extForceInfo.time = time;
                 extForceInfo2.link = simBody->body()->link(link2->index());
                 extForceInfo2.point = point2;
-                extForceInfo2.f = f;
+                extForceInfo2.f = Vector3::Zero();
                 extForceInfo2.time = time;
             }
             if(!extForceFunctionId){
@@ -2309,7 +2309,9 @@ void SimulatorItemImpl::doSetExternalForce()
     std::lock_guard<std::mutex> lock(extForceMutex);
     Link* link = extForceInfo.link;
     Link* link2 = extForceInfo2.link;
-    link->f_ext() += extForceInfo.f;
+    double link2_q = link2->q() * 180 / 3.1415;
+    // std::cerr << link2_q << std::endl;
+    link->f_ext() += extForceInfo.f * link2_q;
     link2->f_ext() += extForceInfo2.f;
     const Vector3 p = link->T() * extForceInfo.point;
     const Vector3 p2 = link->T() * extForceInfo2.point;
