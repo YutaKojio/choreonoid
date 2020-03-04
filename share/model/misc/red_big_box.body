@@ -1,0 +1,27 @@
+format: ChoreonoidBody
+formatVersion: 1.0
+angleUnit: radian
+name: red_big_box
+
+links:
+  -
+    name: WAIST
+    jointType: free
+    translation: [ 0, 0, 0 ]
+    rotation: [ 0, 0, 1, 0 ]
+    elements:
+      -
+        type: RigidBody
+        mass: 300.0
+        inertia: [
+          1000.0, 0, 0,
+          0, 1000.0, 0,
+          0, 0, 1000.0 ]
+        elements:
+          Shape:
+            geometry:
+              type: Box
+              size: [ 0.5, 1.2, 1.0 ]
+            appearance:
+              material:
+                diffuseColor: [ 1.0, 0.0, 0.0 ]

@@ -1,0 +1,28 @@
+format: ChoreonoidBody
+formatVersion: 1.0
+angleUnit: radian
+name: red_box
+
+links:
+  -
+    name: WAIST
+    jointType: free
+    translation: [ 0, 0, 0 ]
+    rotation: [ 0, 0, 1, 0 ]
+    elements:
+      -
+        type: RigidBody
+        mass: 200.0
+        inertia: [
+          1000.0, 0, 0,
+          0, 1000.0, 0,
+          0, 0, 1000.0 ]
+        elements:
+          Shape:
+            geometry:
+              type: Box
+              # size: [ 0.35, 0.20, 0.07 ]
+              size: [ 0.39, 0.19, 0.15 ] # concrete block
+            appearance:
+              material:
+                diffuseColor: [ 0.4, 0.4, 0.4 ]
